@@ -4,8 +4,6 @@ public class Board {
 	private int player;
 	private int[][] board;
 	private PlayerService opponent;
-	////////
-	private PlayerService currentPlayer;
 
 	public Board() {
 		this.player = 1;
@@ -73,7 +71,6 @@ public class Board {
 			return false;
 	}
 
-	// parameter and data
 	public boolean isNotTaken(int row, int column) {
 		if (board[column][row] == 1 || board[column][row] == 2) {
 			return false;
@@ -81,12 +78,12 @@ public class Board {
 
 		return true;
 	}
-	
+
 	public boolean isWithinRange(int row, int column) {
 		if (row > 2 || row < 0 || column > 2 || column < 0){
 			return false;
 		}
-		
+
 		return true;
 	}
 
@@ -95,7 +92,7 @@ public class Board {
 	}
 
 	public String displayBoard() {
-		String grid = board[0][0] + " " + board[0][1] + " " + board[0][1] + "\n" + board[1][0] + " " + board[1][1] + " "
+		String grid = board[0][0] + " " + board[0][1] + " " + board[0][2] + "\n" + board[1][0] + " " + board[1][1] + " "
 				+ board[1][2] + "\n" + board[2][0] + " " + board[2][1] + " " + board[2][2];
 		return grid;
 	}

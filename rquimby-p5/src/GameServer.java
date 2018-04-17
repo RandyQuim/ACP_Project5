@@ -6,6 +6,7 @@ public class GameServer {
 	public static final int T3_PORT = 8888;
 
 	public static void main(String[] args) throws IOException {
+		// Maybe fix resource leak?
 		ServerSocket server = new ServerSocket(T3_PORT);
 		System.out.println("Waiting for clients to connect...");
 		Board board = new Board();

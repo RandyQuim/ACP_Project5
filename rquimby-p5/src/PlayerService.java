@@ -76,14 +76,20 @@ public class PlayerService implements Runnable {
 						out.println("Board is full!  Its a draw!");
 					} else {
 						board.placeMark(playerNum, row, column);
-						out.println("Player " + playerNum + " has chosen [" + row + "] [" + column + "]");
-						out.println(board.displayBoard());
-						out.flush();
-						board.getOpponent().otherPlayerMoved();
-						board.setOpponent(this);
+						if (board.isWinner()) {
+							out.println("WINNER \nPlayer " + playerNum + " Wins!");
+							board.getOpponent().out.println("WINNER \nPlayer " + playerNum + " Wins!");
+							board.getOpponent().out.flush();
+							// gotta show the board one last time to both players!
+						} else {
+							out.println("Player " + playerNum + " has chosen [" + row + "] [" + column + "]");
+							out.println(board.displayBoard());
+							board.getOpponent().otherPlayerMoved();
+							board.setOpponent(this);
+						}
 					}
 				} else {
-					out.println("ILLEGAL MOVE (numbers not within range)!");
+					out.println("ILLEGAL Board Position (numbers not within range)!");
 				}
 			} else {
 				out.println("Position [" + row + "] " + "[" + column + "] is taken, try again.");
@@ -95,7 +101,7 @@ public class PlayerService implements Runnable {
 
 	public void otherPlayerMoved() {
 		board.getOpponent().out.println("OPPONENT_MOVED" + " \n" + board.displayBoard());
-		board.getOpponent().out.println("Player " + board.getPlayer() + "turn");
+		board.getOpponent().out.println("Player " + board.getPlayer());
 		board.getOpponent().out.flush();
 	}
 }

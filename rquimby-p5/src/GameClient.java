@@ -17,7 +17,7 @@ public class GameClient {
 		// complete try / catch
 		try {
 			System.out.println("Welcome to a multi-player Tic Tac Toe game.");
-			System.out.println("How to play: in turn, each player will place their mark ");
+			System.out.println("In turn, each player will place their mark ");
 			System.out.println("by entering 2 numbers that represent a row and a column.\n");
 			System.out.print("Please enter your name: ");
 			String name = input.next();
@@ -34,12 +34,17 @@ public class GameClient {
 			String rowThree = "";
 			boolean flag = false;
 
+			// Players are FORCED to alternate turns with this coding scheme.
+			// Therefore, no need to output message "Not player <int> turn". Is
+			// that ok?
+
+			// Also, illegal player number?? Players are supposed to manually
+			// put in their player num??????  With this code, player numbers
+			// are assigned (1 and 2 players for every 2 clients joining).
 			while (true) {
 				if (!flag) {
-				//	flag = false;
 					response = in.nextLine();
 				}
-
 				if (!response.startsWith("OPPONENT_MOVED")) {
 					flag = false;
 					System.out.print("Enter the row and column you wish to place your mark: ");
@@ -73,6 +78,13 @@ public class GameClient {
 					System.out.println("Must Wait");
 				} else if (response.startsWith("Position")) {
 					flag = true;
+				} else if (response.startsWith("WINNER")) {
+					System.out.println("Receiving: " + in.nextLine());
+					command = "QUIT\n";
+					System.out.print("Sending: " + command);
+					out.print(command);
+					out.flush();
+					break;
 				}
 
 				System.out.println("Receiving: " + response + "\n");
