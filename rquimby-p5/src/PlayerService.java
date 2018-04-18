@@ -70,29 +70,27 @@ public class PlayerService implements Runnable {
 		if (!board.isTwoPlayers()) {
 			out.println("We do not have two players yet");
 		} else {
-			if (board.isNotTaken(row, column)) {
-				if (board.isWithinRange(row, column)) {
-					if (board.boardFull()) {
+			if (board.isWithinRange(row, column)) {  // flip these
+				if (board.isNotTaken(row, column)) {
+					if (board.boardFull()) {  /// here................
 						out.println("Board is full!  Its a draw!");
 					} else {
 						board.placeMark(playerNum, row, column);
+						out.println("Player " + playerNum + " has chosen [" + row + "] [" + column + "]");
+						out.println(board.displayBoard());
+						board.getOpponent().otherPlayerMoved();
 						if (board.isWinner()) {
 							out.println("WINNER \nPlayer " + playerNum + " Wins!");
 							board.getOpponent().out.println("WINNER \nPlayer " + playerNum + " Wins!");
-							board.getOpponent().out.flush();
-							// gotta show the board one last time to both players!
-						} else {
-							out.println("Player " + playerNum + " has chosen [" + row + "] [" + column + "]");
-							out.println(board.displayBoard());
-							board.getOpponent().otherPlayerMoved();
-							board.setOpponent(this);
 						}
+						board.getOpponent().out.flush();
+						board.setOpponent(this);
 					}
 				} else {
-					out.println("ILLEGAL Board Position (numbers not within range)!");
+					out.println("Position [" + row + "] " + "[" + column + "] is taken, try again.");
 				}
 			} else {
-				out.println("Position [" + row + "] " + "[" + column + "] is taken, try again.");
+				out.println("ILLEGAL Board Position (numbers not within range)!");
 			}
 		}
 
@@ -102,6 +100,6 @@ public class PlayerService implements Runnable {
 	public void otherPlayerMoved() {
 		board.getOpponent().out.println("OPPONENT_MOVED" + " \n" + board.displayBoard());
 		board.getOpponent().out.println("Player " + board.getPlayer());
-		board.getOpponent().out.flush();
+		 ////////////////////////
 	}
 }

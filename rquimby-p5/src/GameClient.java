@@ -42,10 +42,11 @@ public class GameClient {
 			// put in their player num??????  With this code, player numbers
 			// are assigned (1 and 2 players for every 2 clients joining).
 			while (true) {
+				// OK, check the rest... "we" works now, ILLEGAL works now, position is working, OPPONENT and PLAYEr working....
 				if (!flag) {
 					response = in.nextLine();
 				}
-				if (!response.startsWith("OPPONENT_MOVED")) {
+				if (!response.startsWith("OPPONENT_MOVED") && !response.startsWith("WINNER")) {
 					flag = false;
 					System.out.print("Enter the row and column you wish to place your mark: ");
 					int row = input.nextInt();
@@ -62,6 +63,7 @@ public class GameClient {
 					rowThree = in.nextLine();
 					System.out.println(rowOne + "\n" + rowTwo + "\n" + rowThree);
 				} else if (response.startsWith("Board")) {
+					//BOARD FULL is not working... I think its the output... not methods
 					System.out.println("Receiving: " + response);
 					command = "QUIT\n";
 					System.out.print("Sending: " + command);
@@ -76,15 +78,19 @@ public class GameClient {
 					System.out.println("Opponent made their move!");
 				} else if (response.startsWith("We")) {
 					System.out.println("Must Wait");
+					flag = true;
 				} else if (response.startsWith("Position")) {
 					flag = true;
 				} else if (response.startsWith("WINNER")) {
+					// requires slight fix maybe?
 					System.out.println("Receiving: " + in.nextLine());
 					command = "QUIT\n";
 					System.out.print("Sending: " + command);
 					out.print(command);
 					out.flush();
 					break;
+				} else if (response.startsWith("ILLEGAL")){
+					flag = true;
 				}
 
 				System.out.println("Receiving: " + response + "\n");
