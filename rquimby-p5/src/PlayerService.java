@@ -70,22 +70,25 @@ public class PlayerService implements Runnable {
 		if (!board.isTwoPlayers()) {
 			out.println("We do not have two players yet");
 		} else {
-			if (board.isWithinRange(row, column)) {  // flip these
+			if (board.isWithinRange(row, column)) {
 				if (board.isNotTaken(row, column)) {
-					if (board.boardFull()) {  /// here................
-						out.println("Board is full!  Its a draw!");
-					} else {
-						board.placeMark(playerNum, row, column);
-						out.println("Player " + playerNum + " has chosen [" + row + "] [" + column + "]");
-						out.println(board.displayBoard());
-						board.getOpponent().otherPlayerMoved();
-						if (board.isWinner()) {
-							out.println("WINNER \nPlayer " + playerNum + " Wins!");
-							board.getOpponent().out.println("WINNER \nPlayer " + playerNum + " Wins!");
-						}
-						board.getOpponent().out.flush();
-						board.setOpponent(this);
+					board.placeMark(playerNum, row, column);
+					out.println("Player " + playerNum + " has chosen [" + row + "] [" + column + "]");
+					out.println(board.displayBoard());
+					board.getOpponent().otherPlayerMoved();
+					if (board.isWinner()) {
+						out.println("WINNER \nPlayer " + playerNum + " WINS!");
+						board.getOpponent().out.println("WINNER \nPlayer " + playerNum + " WINS!");
+						board.reset();
 					}
+					if (board.boardFull()) {
+						out.println("Board is full!  Its a draw!");
+						board.getOpponent().out.println("Board is full!  Its a draw!");
+						board.reset();
+					}
+					board.getOpponent().out.flush();
+					board.setOpponent(this);
+
 				} else {
 					out.println("Position [" + row + "] " + "[" + column + "] is taken, try again.");
 				}
@@ -94,12 +97,11 @@ public class PlayerService implements Runnable {
 			}
 		}
 
-		out.flush();
+		//out.flush();
 	}
 
 	public void otherPlayerMoved() {
 		board.getOpponent().out.println("OPPONENT_MOVED" + " \n" + board.displayBoard());
 		board.getOpponent().out.println("Player " + board.getPlayer());
-		 ////////////////////////
 	}
 }

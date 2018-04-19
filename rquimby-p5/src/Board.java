@@ -80,7 +80,7 @@ public class Board {
 	}
 
 	public boolean isWithinRange(int row, int column) {
-		if (row > 2 || row < 0 || column > 2 || column < 0){
+		if (row > 2 || row < 0 || column > 2 || column < 0) {
 			return false;
 		}
 
@@ -95,6 +95,15 @@ public class Board {
 		String grid = board[0][0] + " " + board[0][1] + " " + board[0][2] + "\n" + board[1][0] + " " + board[1][1] + " "
 				+ board[1][2] + "\n" + board[2][0] + " " + board[2][1] + " " + board[2][2];
 		return grid;
+	}
+
+	public void reset() {
+		for (int i = 0; i < board.length; i++) {
+			for (int j = 0; j < board.length; j++) {
+				board[i][j] = 0;
+			}
+		}
+
 	}
 
 }
