@@ -3,17 +3,51 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
+/**
+ * Executes Game Protocol commands from a socket. A class for each thread
+ * running the game.
+ *
+ * @author Randy Quimby
+ * @version 1.0
+ *
+ *          COP4027 Project#: 5 File Name: PlayerService.java
+ */
 public class PlayerService implements Runnable {
+	/**
+	 * The regular socket for network communication
+	 */
 	private Socket socket;
+	/**
+	 * The stream for input
+	 */
 	private Scanner in;
+	/**
+	 * The stream for output
+	 */
 	private PrintWriter out;
+	/**
+	 * The game board
+	 */
 	private Board board;
 
+	/**
+	 * Constructs a PlayerService object with a regular socket for network
+	 * communication and sets a Board object shared by every client to the
+	 * instance field
+	 *
+	 * @param s the regular socket for server communication
+	 * @param board the game board
+	 */
 	public PlayerService(Socket s, Board board) {
 		this.socket = s;
 		this.board = board;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public void run() {
 		try {
@@ -29,6 +63,9 @@ public class PlayerService implements Runnable {
 		}
 	}
 
+	/**
+	 * Runs threads until game comes to completion
+	 */
 	private void doService() {
 		while (true) {
 			if (!in.hasNext())
@@ -41,6 +78,11 @@ public class PlayerService implements Runnable {
 		}
 	}
 
+	/**
+	 * Executes the initial commands and delegates them accordingly
+	 *
+	 * @param command the command from the client to be executed
+	 */
 	private void executeCommand(String command) {
 		if (command.equals("JOIN")) {
 			String name = in.next();
@@ -63,6 +105,10 @@ public class PlayerService implements Runnable {
 		out.flush();
 	}
 
+	/**
+	 * Attempts to execute a player move. Several checks are put in place to
+	 * ensure the move is legal and to determine a draw or winner.
+	 */
 	private void executeMove() {
 		int playerNum = in.nextInt();
 		int row = in.nextInt();
@@ -98,6 +144,10 @@ public class PlayerService implements Runnable {
 		}
 	}
 
+	/**
+	 * Accesses other clients' command prompt (accesses other threads/player
+	 * proxies) to update the game board when current player makes a legal move
+	 */
 	public void otherPlayerMoved() {
 		board.getOpponent().out.println("OPPONENT_MOVED" + " \n" + board.displayBoard());
 		board.getOpponent().out.println("Player " + board.getPlayer());

@@ -5,6 +5,14 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
+/**
+ * This program tests the game server. Represents the client side of a socket.
+ *
+ * @author Randy Quimby
+ * @version 1.0
+ *
+ *          COP4027 Project#: 5 File Name: GameClient.java
+ */
 public class GameClient {
 
 	public static void main(String[] args) throws IOException {
@@ -36,6 +44,7 @@ public class GameClient {
 		String rowThree = "";
 		boolean illegalMove = false;
 		try {
+			// Loop tests command messages from the server
 			while (true) {
 				if (!illegalMove) {
 					response = in.nextLine();
@@ -48,6 +57,10 @@ public class GameClient {
 					int number = input.nextInt();
 					int row = input.nextInt();
 					int column = input.nextInt();
+					/* Player numbers are generated automatically by the
+					 * program. This was implemented to ensure instructions were
+					 * followed
+					 */
 					while (number != playerNum) {
 						System.out.println("Illegal player number!");
 						System.out.print("Please reenter your player number, row and column: ");
