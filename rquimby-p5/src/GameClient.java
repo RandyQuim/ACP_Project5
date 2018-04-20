@@ -61,7 +61,6 @@ public class GameClient {
 					out.flush();
 					response = in.nextLine();
 				}
-
 				if (response.startsWith("Player")) {
 					rowOne = in.nextLine();
 					rowTwo = in.nextLine();
@@ -98,9 +97,7 @@ public class GameClient {
 
 				System.out.println("Receiving: " + response + "\n");
 			}
-		} finally
-
-		{
+		} finally {
 			s.close();
 			in.close();
 			input.close();

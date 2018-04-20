@@ -73,7 +73,8 @@ public class PlayerService implements Runnable {
 			if (board.isWithinRange(row, column)) {
 				if (board.isNotTaken(row, column)) {
 					board.placeMark(playerNum, row, column);
-					out.println("Player " + playerNum + " has chosen [" + row + "] [" + column + "]");
+					out.println("Player " + playerNum + " has chosen [" + row + "] [" + column + "]. Player "
+							+ board.otherPlayerNumber(playerNum) + "'s turn...");
 					out.println(board.displayBoard());
 					board.getOpponent().otherPlayerMoved();
 					if (board.isWinner()) {
@@ -88,7 +89,6 @@ public class PlayerService implements Runnable {
 					}
 					board.getOpponent().out.flush();
 					board.setOpponent(this);
-
 				} else {
 					out.println("Position [" + row + "] " + "[" + column + "] is taken, try again.");
 				}
@@ -96,8 +96,6 @@ public class PlayerService implements Runnable {
 				out.println("ILLEGAL Board Position (numbers not within range)!");
 			}
 		}
-
-		//out.flush();
 	}
 
 	public void otherPlayerMoved() {

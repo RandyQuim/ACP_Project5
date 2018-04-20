@@ -105,5 +105,14 @@ public class Board {
 		}
 
 	}
+	
+	public int otherPlayerNumber(int playerNum) {
+		int otherPlayerNum = 0;
+		if (playerNum == 1) {
+			otherPlayerNum = 2;
+		} else
+			otherPlayerNum = 1;
+		return otherPlayerNum;
+	}
 
 }
