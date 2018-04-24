@@ -14,9 +14,10 @@ import java.util.Scanner;
  *          COP4027 Project#: 5 File Name: GameClient.java
  */
 public class GameClient {
+	private static final int T3_PORT = 8888;
 
 	public static void main(String[] args) throws IOException {
-		Socket s = new Socket("localhost", GameServer.T3_PORT);
+		Socket s = new Socket("localhost", T3_PORT);
 		InputStream instream = s.getInputStream();
 		OutputStream outstream = s.getOutputStream();
 		Scanner in = new Scanner(instream);
@@ -26,12 +27,21 @@ public class GameClient {
 		System.out.println("Welcome to a multi-player Tic Tac Toe game.");
 		System.out.println("In turn, each player will place their mark ");
 		System.out.println("by entering 2 numbers that represent a row and a column.\n");
-		System.out.print("Please enter your name: ");
-		String name = input.next();
-		String command = "JOIN " + name + "\n";
+		boolean flag;
+		String command = "";
+		do {
+			flag = false;
+			System.out.print("Please enter the 'join' command followed \nby your name <join command> <name>: ");
+			command = input.next().toUpperCase() + " " + input.next() + "\n";
+			if (!command.startsWith("JOIN")) {
+				flag = true;
+				System.out.println("Must type 'join' and then your name (IE join Randy)");
+			}
+		} while (flag);
 		System.out.print("Sending: " + command);
 		out.print(command);
 		out.flush();
+
 		String response = in.nextLine();
 		int playerNum = in.nextInt();
 		System.out.println("Receiving: " + response + "\n");
@@ -50,26 +60,39 @@ public class GameClient {
 					response = in.nextLine();
 				}
 				if (!response.startsWith("OPPONENT_MOVED") && !response.startsWith("WINNER")
-						&& !response.startsWith("Board")) {
-					illegalMove = false;
-					System.out.print("Enter your player number, and then the row and column "
-							+ "you \nwish to place your mark <player number> <row> <column>: ");
-					int number = input.nextInt();
-					int row = input.nextInt();
-					int column = input.nextInt();
-					/* Player numbers are generated automatically by the
-					 * program. This was implemented to ensure instructions were
-					 * followed
-					 */
-					while (number != playerNum) {
-						System.out.println("Illegal player number!");
-						System.out.print("Please reenter your player number, row and column: ");
-						number = input.nextInt();
-						row = input.nextInt();
-						column = input.nextInt();
+						&& !response.startsWith("Board") && !response.startsWith("QUIT")) {
+					System.out.print("Enter 'choose', your player number, and then the row\n"
+							+ "and column you wish to place your mark <choose command>\n"
+							+ "<player number> <row> <column> (or type 'quit' to quit): ");
+					String choice = input.next();
+					if (!choice.toUpperCase().equals("CHOOSE") && !choice.toUpperCase().equals("QUIT")) {
+						choice = "CHOOSE";
 					}
-					command = "CHOOSE " + playerNum + " " + row + " " + column + "\n";
-					System.out.println("Sending: " + command);
+					if (choice.toUpperCase().equals("CHOOSE")) {
+						int number = input.nextInt();
+						int row = input.nextInt();
+						int column = input.nextInt();
+						/*
+						 * Player numbers are generated automatically by the
+						 * program. However, the following code was implemented
+						 * to ensure instructions were followed.
+						 */
+						while (number != playerNum) {
+							System.out.println("Illegal player number!");
+							System.out.print("Please reenter your player number, row and column: ");
+							if (!input.hasNextInt()) {
+								// Disregards if user reenters the command
+								input.next();
+							}
+							number = input.nextInt();
+							row = input.nextInt();
+							column = input.nextInt();
+						}
+						command = choice.toUpperCase() + " " + playerNum + " " + row + " " + column + "\n";
+						System.out.println("Sending: " + command);
+					} else {
+						command = choice.toUpperCase() + " " + playerNum;
+					}
 					out.println(command);
 					out.flush();
 					response = in.nextLine();
@@ -79,9 +102,10 @@ public class GameClient {
 					rowTwo = in.nextLine();
 					rowThree = in.nextLine();
 					System.out.println(rowOne + "\n" + rowTwo + "\n" + rowThree);
+					illegalMove = false;
 				} else if (response.startsWith("Board")) {
 					System.out.println("Receiving: " + response);
-					command = "QUIT\n";
+					command = "QUIT " + playerNum;
 					System.out.print("Sending: " + command);
 					out.print(command);
 					out.flush();
@@ -99,13 +123,17 @@ public class GameClient {
 					illegalMove = true;
 				} else if (response.startsWith("WINNER")) {
 					System.out.println("Receiving: " + in.nextLine());
-					command = "QUIT\n";
+					command = "QUIT " + playerNum;
 					System.out.print("Sending: " + command);
 					out.print(command);
 					out.flush();
 					break;
 				} else if (response.startsWith("ILLEGAL")) {
 					illegalMove = true;
+				} else if (response.startsWith("QUIT")) {
+					System.out.println("Receiving: " + in.nextLine());
+					System.out.println("End program...");
+					break;
 				}
 
 				System.out.println("Receiving: " + response + "\n");

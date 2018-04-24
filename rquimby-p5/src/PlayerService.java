@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Executes Game Protocol commands from a socket. A class for each thread
@@ -29,6 +30,10 @@ public class PlayerService implements Runnable {
 	 * The game board
 	 */
 	private Board board;
+	/**
+	 * The lock for player turns
+	 */
+	private ReentrantLock lock;
 
 	/**
 	 * Constructs a PlayerService object with a regular socket for network
@@ -41,6 +46,7 @@ public class PlayerService implements Runnable {
 	public PlayerService(Socket s, Board board) {
 		this.socket = s;
 		this.board = board;
+		this.lock = new ReentrantLock();
 	}
 
 	/*
@@ -64,16 +70,23 @@ public class PlayerService implements Runnable {
 	}
 
 	/**
-	 * Runs threads until game comes to completion
+	 * Runs threads until game comes to completion (until quit command via
+	 * winner, draw, or manual player quit)
 	 */
 	private void doService() {
 		while (true) {
 			if (!in.hasNext())
 				return;
 			String command = in.next();
-			if (command.equals("QUIT"))
+			if (command.equals("QUIT")) {
+				int player = in.nextInt();
+				out.println("QUIT \nPlayer chose quit");
+				board.getOpponent().out
+						.println("QUIT \nPlayer " + player + " quit the game");
+				out.flush();
+				board.getOpponent().out.flush();
 				return;
-			else
+			} else
 				executeCommand(command);
 		}
 	}
@@ -110,11 +123,12 @@ public class PlayerService implements Runnable {
 	 * ensure the move is legal and to determine a draw or winner.
 	 */
 	private void executeMove() {
+		lock.lock();
 		int playerNum = in.nextInt();
 		int row = in.nextInt();
 		int column = in.nextInt();
 		if (!board.isTwoPlayers()) {
-			out.println("We do not have two players yet");
+			out.println("We do not have two players yet!");
 		} else {
 			if (board.isWithinRange(row, column)) {
 				if (board.isNotTaken(row, column)) {
@@ -142,13 +156,15 @@ public class PlayerService implements Runnable {
 				out.println("ILLEGAL Board Position (numbers not within range)!");
 			}
 		}
+
+		lock.unlock();
 	}
 
 	/**
 	 * Accesses other clients' command prompt (accesses other threads/player
 	 * proxies) to update the game board when current player makes a legal move
 	 */
-	public void otherPlayerMoved() {
+	private void otherPlayerMoved() {
 		board.getOpponent().out.println("OPPONENT_MOVED" + " \n" + board.displayBoard());
 		board.getOpponent().out.println("Player " + board.getPlayer());
 	}

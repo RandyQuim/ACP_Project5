@@ -14,7 +14,7 @@ public class GameServer {
 	/**
 	 * The port number (Represents three T's for Tic Tac Toe)
 	 */
-	public static final int T3_PORT = 8888;
+	private static final int T3_PORT = 8888;
 
 	public static void main(String[] args) throws IOException {
 		ServerSocket server = null;
