@@ -132,20 +132,12 @@ public class PlayerService implements Runnable {
 		} else {
 			if (board.isWithinRange(row, column)) {
 				if (board.isNotTaken(row, column)) {
-					board.placeMark(playerNum, row, column);
-					out.println("Player " + playerNum + " has chosen [" + row + "] [" + column + "]. Player "
-							+ board.otherPlayerNumber(playerNum) + "'s turn...");
-					out.println(board.displayBoard());
-					board.getOpponent().otherPlayerMoved();
+					processMove(playerNum, row, column);
 					if (board.isWinner()) {
-						out.println("WINNER \nPlayer " + playerNum + " WINS!");
-						board.getOpponent().out.println("WINNER \nPlayer " + playerNum + " WINS!");
-						board.reset();
+						processWin(playerNum);
 					}
 					if (board.boardFull()) {
-						out.println("Board is full!  Its a draw!");
-						board.getOpponent().out.println("Board is full!  Its a draw!");
-						board.reset();
+						processDraw();
 					}
 					board.getOpponent().out.flush();
 					board.setOpponent(this);
@@ -158,6 +150,41 @@ public class PlayerService implements Runnable {
 		}
 
 		lock.unlock();
+	}
+
+	/**
+	 * Processes a draw to all clients
+	 */
+	private void processDraw() {
+		out.println("Board is full!  Its a draw!");
+		board.getOpponent().out.println("Board is full!  Its a draw!");
+		board.reset();
+	}
+
+	/**
+	 * Processes a win condition to all clients
+	 *
+	 * @param playerNum the player number
+	 */
+	private void processWin(int playerNum) {
+		out.println("WINNER \nPlayer " + playerNum + " WINS!");
+		board.getOpponent().out.println("WINNER \nPlayer " + playerNum + " WINS!");
+		board.reset();
+	}
+
+	/**
+	 * Processes the player move to all clients
+	 *
+	 * @param playerNum the player number
+	 * @param row the row number of the board
+	 * @param column the column number of the board
+	 */
+	private void processMove(int playerNum, int row, int column) {
+		board.placeMark(playerNum, row, column);
+		out.println("Player " + playerNum + " has chosen [" + row + "] [" + column + "]. Player "
+				+ board.otherPlayerNumber(playerNum) + "'s turn...");
+		out.println(board.displayBoard());
+		board.getOpponent().otherPlayerMoved();
 	}
 
 	/**

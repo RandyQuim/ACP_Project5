@@ -3,7 +3,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
- * A server that executes the Tic Tac Toe game Protocol.
+ * A server that executes the Tic-Tac-Toe game Protocol.
  *
  * @author Randy Quimby
  * @version 1.0
